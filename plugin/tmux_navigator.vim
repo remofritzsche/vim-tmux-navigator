@@ -108,12 +108,19 @@ function! s:TmuxAwareNavigate(direction)
       catch /^Vim\%((\a\+)\)\=:E141/ " catches the no file name error
       endtry
     endif
-    let args = 'select-pane -t ' . shellescape($TMUX_PANE) . ' -' . tr(a:direction, 'phjkl', 'lLDUR')
-    silent call s:TmuxCommand(args)
-    if s:NeedsVitalityRedraw()
-      redraw!
+
+    if a:direction == "h"
+      call system("navigate left")
+    elseif a:direction == "l"
+      call system("navigate right")
+    elseif a:direction == "k"
+      call system("navigate top")
+    elseif a:direction == "j"
+      call system("navigate bottom")
+    else
+      call system("navigate previous")
+      let s:tmux_is_last_pane = 1
     endif
-    let s:tmux_is_last_pane = 1
   else
     let s:tmux_is_last_pane = 0
   endif
